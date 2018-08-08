@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
@@ -26,12 +27,13 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 @Configuration
 @EnableAuthorizationServer
 public class OAuth2AuthServerConfig extends AuthorizationServerConfigurerAdapter {
-	@Autowired
-	private BCryptPasswordEncoder passwordEncoder;
 	
 	@Autowired
 	@Qualifier("authenticationManagerBean")
 	private AuthenticationManager authenticationManager;
+	
+	@Autowired
+	UserDetailsService userDetailsService;
 	
 	@Override
 	public void configure(final AuthorizationServerSecurityConfigurer authServerConfig) throws Exception {
@@ -42,16 +44,16 @@ public class OAuth2AuthServerConfig extends AuthorizationServerConfigurerAdapter
 	public void configure(final ClientDetailsServiceConfigurer clientConfig) throws Exception {
 		clientConfig.inMemory()
 			.withClient("sputnikWeb")
-			.secret(passwordEncoder.encode("sputnikEna"))
+			.secret(passwordEncoder().encode("sputnikEn@Web321"))
 			.authorizedGrantTypes("password", "authorization_code", "refresh_token")
-			.scopes("web", "read", "write")
+			.scopes("read", "write")
 			.accessTokenValiditySeconds(600)
 			.refreshTokenValiditySeconds(3600)
 			.and()
 			.withClient("sputnikAndroid")
-			.secret(passwordEncoder.encode("sputnikEna"))
+			.secret(passwordEncoder().encode("sputnikEn@Android321"))
 			.authorizedGrantTypes("password", "authorization_code", "refresh_token")
-			.scopes("android", "read", "write")
+			.scopes("read", "write")
 			.accessTokenValiditySeconds(600)
 			.refreshTokenValiditySeconds(3600);
 	}
@@ -60,7 +62,11 @@ public class OAuth2AuthServerConfig extends AuthorizationServerConfigurerAdapter
 	public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
 		final TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
 		tokenEnhancerChain.setTokenEnhancers(Arrays.asList(tokenEnhancer(), jwtAccessTokenConverter()));
-		endpoints.tokenStore(tokenStore()).tokenEnhancer(tokenEnhancerChain).authenticationManager(authenticationManager);
+		endpoints.tokenStore(tokenStore())
+			.tokenEnhancer(tokenEnhancerChain)
+			.authenticationManager(authenticationManager)
+			.userDetailsService(userDetailsService);
+		
 		super.configure(endpoints);
 	}
 	
@@ -88,7 +94,7 @@ public class OAuth2AuthServerConfig extends AuthorizationServerConfigurerAdapter
 	
 	@Bean
 	public TokenEnhancer tokenEnhancer() {
-		return new JwtTokenEnhancer();
+		return new MyTokenEnhancer();
 	}
 	
 	@Bean
