@@ -6,6 +6,7 @@ import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -35,6 +36,25 @@ public class OAuth2AuthServerConfig extends AuthorizationServerConfigurerAdapter
 	@Autowired
 	UserDetailsService userDetailsService;
 	
+	@Value("${oauth.client1.id}")
+	private String client1Id;
+	
+	@Value("${oauth.client1.secret}")
+	private String client1Secret;
+	
+	@Value("${oauth.client2.id}")
+	private String client2Id;
+	
+	@Value("${oauth.client2.secret}")
+	private String client2Secret;
+	
+	@Value("${oauth.access.token.validity}")
+	private int accessTokenValidity;
+	
+	@Value("${oauth.refresh.token.validity}")
+	private int refreshTokenValidity;
+	
+	
 	@Override
 	public void configure(final AuthorizationServerSecurityConfigurer authServerConfig) throws Exception {
 		authServerConfig.tokenKeyAccess("permitAll()").checkTokenAccess("isAuthenticated()");
@@ -43,19 +63,19 @@ public class OAuth2AuthServerConfig extends AuthorizationServerConfigurerAdapter
 	@Override
 	public void configure(final ClientDetailsServiceConfigurer clientConfig) throws Exception {
 		clientConfig.inMemory()
-			.withClient("sputnikWeb")
-			.secret(passwordEncoder().encode("sputnikEn@Web321"))
+			.withClient(client1Id)
+			.secret(passwordEncoder().encode(client1Secret))
 			.authorizedGrantTypes("password", "authorization_code", "refresh_token")
 			.scopes("read", "write")
-			.accessTokenValiditySeconds(600)
-			.refreshTokenValiditySeconds(3600)
+			.accessTokenValiditySeconds(accessTokenValidity)
+			.refreshTokenValiditySeconds(refreshTokenValidity)
 			.and()
-			.withClient("sputnikAndroid")
-			.secret(passwordEncoder().encode("sputnikEn@Android321"))
+			.withClient(client2Id)
+			.secret(passwordEncoder().encode(client2Secret))
 			.authorizedGrantTypes("password", "authorization_code", "refresh_token")
 			.scopes("read", "write")
-			.accessTokenValiditySeconds(600)
-			.refreshTokenValiditySeconds(3600);
+			.accessTokenValiditySeconds(accessTokenValidity)
+			.refreshTokenValiditySeconds(refreshTokenValidity);
 	}
 	
 	@Override
