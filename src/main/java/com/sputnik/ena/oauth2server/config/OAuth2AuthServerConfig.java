@@ -116,7 +116,7 @@ public class OAuth2AuthServerConfig extends AuthorizationServerConfigurerAdapter
 	
 	@Bean
 	public TokenEnhancer tokenEnhancer() {
-		return new MyTokenEnhancer();
+		return new SputnikTokenEnhancer();
 	}
 	
 	@Bean

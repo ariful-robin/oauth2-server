@@ -8,7 +8,7 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 
 
-public class MyTokenEnhancer implements TokenEnhancer {
+public class SputnikTokenEnhancer implements TokenEnhancer {
 
 	@Override
 	public OAuth2AccessToken enhance(OAuth2AccessToken oauth2AccessToken, OAuth2Authentication auth) {
