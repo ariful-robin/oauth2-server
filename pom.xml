@@ -8,7 +8,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>oauth2Server</name>
+	<name>oauth2-server</name>
 	<description>Authentication Server</description>
 
 	<parent>
