@@ -53,6 +53,9 @@ public class OAuth2AuthServerConfig extends AuthorizationServerConfigurerAdapter
 	
 	@Value("${oauth.refresh.token.validity}")
 	private int refreshTokenValidity;
+
+	@Value("${oauth.jwt.signing.key}")
+	private String signingKey;
 	
 	
 	@Override
@@ -110,7 +113,7 @@ public class OAuth2AuthServerConfig extends AuthorizationServerConfigurerAdapter
 	@Bean
 	public JwtAccessTokenConverter jwtAccessTokenConverter() {
 		JwtAccessTokenConverter jwtTokenConverter = new JwtAccessTokenConverter();
-		jwtTokenConverter.setSigningKey("sputnik@007");
+		jwtTokenConverter.setSigningKey(signingKey);
 		return jwtTokenConverter;
 	}
 	
