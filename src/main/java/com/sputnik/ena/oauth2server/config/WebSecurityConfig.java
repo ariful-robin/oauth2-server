@@ -40,7 +40,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		auth.inMemoryAuthentication()
 		.withUser("admin")
 		.password(passwordEncoder.encode("sputnikEna"))
-		.roles("USER", "ADMIN");
-		
+		.roles("USER", "ADMIN")
+		.and()
+		.withUser("user")
+		.password(passwordEncoder.encode("sputnikEna"))
+		.roles("USER");
 	}
 }
